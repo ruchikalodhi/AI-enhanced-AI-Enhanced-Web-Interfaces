@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VocalHub - Enhanced Voice Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+</head>
+<body style="background-image: url('Untitled design (1).jpg');" class="text-gray-900 min-h-screen p-8 font-sans selection:bg-green-400 selection:text-white">
+
+  <header class="text-center mb-12 bg-white rounded-3xl px-8 py-6 max-w-4xl mx-auto shadow-md">
+  <h1 class="text-6xl font-extrabold mb-2 drop-shadow-lg text-green-700">🎙️ VocalHub</h1>
+  <p class="text-lg text-green-600 tracking-wide font-semibold">AI-Powered Voice Dashboard</p>
+  <div
+    id="status"
+    class="mt-3 text-green-600 font-semibold text-lg hidden select-none"
+    aria-live="polite"
+  >🎧 Listening...</div>
+</header>
+
+  <<section
+  id="header-cards"
+  class="flex flex-wrap justify-center gap-10 max-w-5xl mx-auto text-center"
+  aria-label="Summary Statistics"
+>
+  <div
+    class="w-64 p-8 rounded-3xl shadow-lg transition hover:opacity-90 cursor-default"
+    style="background-color:#29b264; color:white;"
+    role="region"
+    aria-labelledby="active-notes-title"
+  >
+    <h2 id="active-notes-title" class="text-2xl font-semibold mb-3">Active Notes</h2>
+    <p class="text-6xl font-extrabold">0</p>
+  </div>
+
+  <div
+    class="w-64 p-8 rounded-3xl shadow-lg transition hover:opacity-90 cursor-default"
+    style="background-color:#29b264; color:white;"
+    role="region"
+    aria-labelledby="pending-tasks-title"
+  >
+    <h2 id="pending-tasks-title" class="text-2xl font-semibold mb-3">Pending Tasks</h2>
+    <p class="text-6xl font-extrabold">0</p>
+  </div>
+
+  <div
+    class="w-96 p-8 rounded-3xl shadow-lg transition hover:opacity-90 cursor-default"
+    style="background-color:#29b264; color:white;"
+    role="region"
+    aria-labelledby="commands-today-title"
+  >
+    <h2 id="commands-today-title" class="text-2xl font-semibold mb-3">Commands Today</h2>
+    <p class="text-6xl font-extrabold">0</p>
+  </div>
+</section>
+
+
+  <main
+    id="card-container"
+    class="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto my-12"
+    aria-live="polite"
+  ></main>
+
+  <footer class="text-center">
+    <button
+      onclick="startVoiceRecognition()"
+      class="inline-flex items-center gap-3 px-8 py-4 rounded-full text-xl font-semibold text-white shadow-lg hover:opacity-90 focus:outline-none focus-visible:ring-4 focus-visible:ring-green-400 transition"
+      style="background-color:#29b264;"
+      aria-label="Start voice recognition"
+    >
+      <i class="fas fa-microphone text-lg"></i> Start Listening
+    </button>
+  </footer>
+
+  <script>
+    let commandCount = 0;
+
+    function createCard(id, title, icon, html) {
+  if (document.getElementById(id)) return;
+  const card = document.createElement("section");
+  card.id = id;
+  card.className =
+    id === "commands-card" ? "p-6 rounded-2xl shadow-md w-96 transition hover:opacity-90" : "p-6 rounded-2xl shadow-md w-72 transition hover:opacity-90";
+
+  card.style.backgroundColor = id === "commands-card" ? "#38948b" : "#29b264";
+  card.style.color = "white";
+  card.setAttribute("aria-label", title);
+  card.innerHTML = `
+    <h2 class="text-2xl font-semibold mb-4 flex items-center gap-3">
+      <i class="fas ${icon}"></i>${title}
+    </h2>
+    <div>${html}</div>
+  `;
+  document.getElementById("card-container").appendChild(card);
+  updateCommandCount();
+}
+
+
+    function updateCommandCount() {
+      commandCount++;
+      const commandsTodayCard = document.querySelector(
+        "#header-cards div:last-child p"
+      );
+      commandsTodayCard.textContent = commandCount;
+    }
+
+    function showWeather() {
+      createCard(
+        "weather-card",
+        "Weather",
+        "fa-cloud-sun",
+        `
+        <p>Temp: 9°C</p>
+        <p>Condition: Rainy</p>
+        <p>Humidity: 30%</p>
+        <p>Location: London, UK</p>
+      `
+      );
+    }
+
+    function showCalculator() {
+      createCard(
+        "calculator-card",
+        "Calculator",
+        "fa-calculator",
+        `
+      <input id="calc-display" type="text" disabled class="w-full mb-4 p-3 bg-green-700/50 text-lg text-right rounded-md text-white" />
+      <div class="grid grid-cols-4 gap-3">
+        ${[
+          "7",
+          "8",
+          "9",
+          "/",
+          "4",
+          "5",
+          "6",
+          "*",
+          "1",
+          "2",
+          "3",
+          "-",
+          "0",
+          ".",
+          "=",
+          "+",
+        ]
+          .map(
+            (v) =>
+              `<button onclick="calcInput('${v}')" class="bg-green-700/50 hover:bg-green-800 rounded-md p-3 font-mono text-lg transition">${v}</button>`
+          )
+          .join("")}
+        <button onclick="calcClear()" class="col-span-4 bg-red-600 hover:bg-red-700 rounded-md p-3 font-semibold mt-2 transition">
+          Clear
+        </button>
+      </div>
+    `
+      );
+    }
+
+    let calcVal = "";
+    function calcInput(val) {
+      if (val === "=") {
+        try {
+          calcVal = eval(calcVal).toString();
+        } catch {
+          calcVal = "Error";
+        }
+      } else {
+        calcVal += val;
+      }
+      document.getElementById("calc-display").value = calcVal;
+    }
+    function calcClear() {
+      calcVal = "";
+      document.getElementById("calc-display").value = "";
+    }
+
+    function showGPS() {
+      createCard("gps-card", "GPS Location", "fa-map-marker-alt", "<p id='gps-info'>Fetching...</p>");
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById("gps-info").textContent =
+            "Lat: " +
+            pos.coords.latitude.toFixed(4) +
+            ", Lng: " +
+            pos.coords.longitude.toFixed(4);
+        },
+        () => (document.getElementById("gps-info").textContent = "Not available")
+      );
+    }
+
+    function showClock() {
+      createCard(
+        "clock-card",
+        "Clock",
+        "fa-clock",
+        "<p id='clock-time' class='text-5xl text-center font-semibold'>--:--:--</p>"
+      );
+      setInterval(() => {
+        const el = document.getElementById("clock-time");
+        if (el) el.textContent = new Date().toLocaleTimeString();
+      }, 1000);
+    }
+
+    function showTime() {
+      const now = new Date();
+      alert("Current time: " + now.toLocaleTimeString());
+    }
+
+    function showYouTube() {
+      createCard(
+        "youtube-card",
+        "YouTube",
+        "youtube",
+        `
+        <button onclick="window.open('https://youtube.com','_blank')" class="w-full flex items-center gap-3 bg-red-600 rounded-md text-white font-semibold hover:bg-red-700 transition px-4 py-2">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube Logo" class="w-6 h-6 object-contain" />
+          Open YouTube
+        </button>
+        `
+      );
+    }
+
+    let audio = null;
+    let isPlaying = false;
+
+    function playMusic() {
+      if (!audio) {
+        audio = new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
+      }
+      if (isPlaying) {
+        audio.pause();
+        alert("Music paused");
+      } else {
+        audio.play();
+        alert("Playing music...");
+      }
+      isPlaying = !isPlaying;
+    }
+
+    function showCommands() {
+      const commandsHTML = `
+        <ul class="list-disc list-inside space-y-2">
+          
+          <li><strong>show weather</strong> - Displays current weather</li>
+          <li><strong>show calculator</strong> - Opens calculator</li>
+          <li><strong>show gps</strong> - Shows GPS location</li>
+          <li><strong>show clock</strong> - Displays a live clock</li>
+          <li><strong>show youtube</strong> - Opens YouTube link</li>
+          <li><strong>show time</strong> - Alerts current time</li>
+          <li><strong>play music</strong> - Plays/pauses music</li>
+        </ul>
+      `;
+      createCard("commands-card", "Available Commands", "fa-list", commandsHTML);
+    }
+
+    function startVoiceRecognition() {
+      const status = document.getElementById("status");
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return alert("Speech recognition not supported!");
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = "en-US";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      status.classList.remove("hidden");
+
+      recognition.onresult = (e) => {
+        const cmd = e.results[0][0].transcript.toLowerCase();
+        if (cmd.includes("show weather")) showWeather();
+        else if (cmd.includes("show calculator")) showCalculator();
+        else if (cmd.includes("show gps")) showGPS();
+        else if (cmd.includes("show clock")) showClock();
+        else if (cmd.includes("show youtube")) showYouTube();
+        else if (cmd.includes("show time")) showTime();
+        else if (cmd.includes("play music")) playMusic();
+        else alert("Unrecognized command: " + cmd);
+        status.classList.add("hidden");
+      };
+
+      recognition.onerror = () => status.classList.add("hidden");
+      recognition.onend = () => status.classList.add("hidden");
+
+      recognition.start();
+    }
+
+    // Show commands card on load
+    window.onload = () => {
+      showCommands();
+    };
+  </script>
+
+  <footer class="mt-8 w-full bg-black shadow-lg">
+  <div class="max-w-7xl mx-auto p-6">
+    <h2 class="text-2xl font-bold text-[#29b264] mb-4 text-center underline">Team Details</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-[#29b264] text-center" style="border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th class="underline text-lg border border-[#29b264]">ID</th>
+            <th class="underline text-lg border border-[#29b264]">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="border border-[#29b264]">23BCE10005</td><td class="border border-[#29b264]">Rashi Verma</td></tr>
+          <tr><td class="border border-[#29b264]">23BCE10034</td><td class="border border-[#29b264]">Ruchika Lodhi</td></tr>
+          <tr><td class="border border-[#29b264]">23BCE10191</td><td class="border border-[#29b264]">Ananya Kushwah</td></tr>
+          <tr><td class="border border-[#29b264]">23BCE10352</td><td class="border border-[#29b264]">Rakshit Verma</td></tr>
+          <tr><td class="border border-[#29b264]">23BCE10449</td><td class="border border-[#29b264]">Suyash Srivastavaa</td></tr>
+          <tr><td class="border border-[#29b264]">23BCE11759</td><td class="border border-[#29b264]">Anamika Gandhi</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="text-lg font-medium text-[#29b264] text-center underline mt-6">
+      <span class="font-bold">Topic 4:</span> AI-Enhanced Web Interfaces
+    </div>
+  </div>
+</footer>
+
+
+</body>
+</html>
