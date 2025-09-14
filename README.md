@@ -8,7 +8,7 @@
 | 23BCE10005 | [Rashi Verma](https://github.com/RashiVerma14) |
 | 23BCE10034 | [Ruchika Lodhi](https://github.com/ruchikalodhi) |
 | 23BCE10191 | [Ananya Kushwah](https://github.com/Ananya10code) |
-| 23BCE10352 | [Rakshit Verma]((https://github.com/RakshitV-12)) |
+| 23BCE10352 | [Rakshit Verma](https://github.com/RakshitV-12) |
 | 23BCE10449 | Suyash Srivastavaa |
 | 23BCE11759 | Anamika Gandhi |
 
