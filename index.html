@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VocalHub - Enhanced Voice Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body class="text-white min-height-screen">
+  
+  <div class="floating-elements">
+    <div class="floating-circle" style="width: 140px; height: 140px; top: 8%; left: 12%; animation-delay: 0s;"></div>
+    <div class="floating-circle" style="width: 200px; height: 200px; top: 15%; right: 10%; animation-delay: 4s;"></div>
+    <div class="floating-circle" style="width: 100px; height: 100px; bottom: 25%; left: 15%; animation-delay: 8s;"></div>
+    <div class="floating-circle" style="width: 160px; height: 160px; bottom: 12%; right: 8%; animation-delay: 2s;"></div>
+    <div class="floating-circle" style="width: 80px; height: 80px; top: 45%; left: 45%; animation-delay: 6s;"></div>
+    
+    <div class="floating-triangle" style="top: 20%; left: 30%; border-left: 30px solid transparent; border-right: 30px solid transparent; border-bottom: 50px solid rgba(255,255,255,0.06); animation-delay: 3s;"></div>
+    <div class="floating-triangle" style="bottom: 30%; right: 25%; border-left: 25px solid transparent; border-right: 25px solid transparent; border-bottom: 40px solid rgba(255,255,255,0.04); animation-delay: 9s;"></div>
+    <div class="floating-triangle" style="top: 60%; left: 70%; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 35px solid rgba(255,255,255,0.05); animation-delay: 12s;"></div>
+    
+    <div class="floating-diamond" style="top: 30%; right: 15%; animation-delay: 5s;"></div>
+    <div class="floating-diamond" style="bottom: 40%; left: 25%; animation-delay: 10s;"></div>
+    <div class="floating-diamond" style="top: 70%; right: 40%; animation-delay: 1s;"></div>
+    
+    <div class="floating-hexagon" style="top: 50%; left: 10%; animation-delay: 7s;"></div>
+    <div class="floating-hexagon" style="bottom: 15%; right: 60%; animation-delay: 11s;"></div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="p-8">
+      <div class="flex items-center justify-between mb-10">
+        <h2 class="text-3xl font-bold title-font">Chat History</h2>
+        <button onclick="toggleSidebar()" class="text-white/60 hover:text-white transition-colors duration-300">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="space-y-4" id="chat-history">
+        </div>
+      
+      <div class="mt-10 p-6 glass-card rounded-xl">
+        <h3 class="font-semibold mb-4 accent-font flex items-center text-lg">
+          <i class="fas fa-chart-line mr-3 text-blue-300"></i>
+          Session Statistics
+        </h3>
+        <div class="space-y-3 text-sm body-font">
+          <div class="flex justify-between items-center p-2 bg-white/5 rounded-lg">
+            <span>Voice Commands</span>
+            <span id="sidebar-commands" class="font-bold">0</span>
+          </div>
+          <div class="flex justify-between items-center p-2 bg-white/5 rounded-lg">
+            <span>Active Cards</span>
+            <span id="sidebar-cards" class="font-bold">0</span>
+          </div>
+          <div class="flex justify-between items-center p-2 bg-white/5 rounded-lg">
+            <span>Session Duration</span>
+            <span id="session-time" class="font-bold">0m</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-content" class="main-content p-6 lg:p-12">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="flex items-center mb-10">
+        <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="ml-8 text-sm text-white/70 accent-font">
+          <i class="fas fa-history mr-2"></i>View Previous Sessions
+        </div>
+      </div>
+      
+      <div class="text-center mb-16">
+        <div class="inline-block p-8 glass-card rounded-full mb-8">
+          <i class="fas fa-microphone-alt text-7xl text-white"></i>
+        </div>
+        <h1 class="text-7xl lg:text-8xl font-black mb-6 title-gradient title-font tracking-tight">
+          VocalHub
+        </h1>
+        <p class="text-3xl lg:text-4xl font-light mb-8 opacity-90 body-font">Sophisticated Voice Command Interface</p>
+        <div id="status" class="inline-block px-10 py-5 glass-card rounded-full font-semibold text-xl status-indicator hidden listening-glow">
+          <i class="fas fa-headphones mr-4"></i>
+          <span class="accent-font">Listening intently...</span>
+        </div>
+      </div>
+
+      <div id="header-cards" class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 mb-16">
+        <div class="stat-card p-10 rounded-3xl text-center slide-in card-hover-effect">
+          <div class="text-blue-300 mb-5">
+            <i class="fas fa-sticky-note text-4xl"></i>
+          </div>
+          <h2 class="text-2xl font-semibold mb-5 opacity-90 title-font tracking-wide">Active Notes</h2>
+          <p class="text-6xl lg:text-7xl font-black mb-4 body-font" id="notes-count">0</p>
+          <div class="w-full bg-white/20 rounded-full h-4">
+            <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-4 rounded-full transition-all duration-1500" style="width: 0%"></div>
+          </div>
+        </div>
+        
+        <div class="stat-card p-10 rounded-3xl text-center slide-in card-hover-effect" style="animation-delay: 0.3s;">
+          <div class="text-purple-300 mb-5">
+            <i class="fas fa-tasks text-4xl"></i>
+          </div>
+          <h2 class="text-2xl font-semibold mb-5 opacity-90 title-font tracking-wide">Pending Tasks</h2>
+          <p class="text-6xl lg:text-7xl font-black mb-4 body-font" id="tasks-count">0</p>
+          <div class="w-full bg-white/20 rounded-full h-4">
+            <div class="bg-gradient-to-r from-purple-400 to-purple-600 h-4 rounded-full transition-all duration-1500" style="width: 0%"></div>
+          </div>
+        </div>
+        
+        <div class="stat-card p-10 rounded-3xl text-center slide-in card-hover-effect" style="animation-delay: 0.6s;">
+          <div class="text-green-300 mb-5">
+            <i class="fas fa-bolt text-4xl"></i>
+          </div>
+          <h2 class="text-2xl font-semibold mb-5 opacity-90 title-font tracking-wide">Commands Today</h2>
+          <p class="text-6xl lg:text-7xl font-black mb-4 body-font" id="commands-count">0</p>
+          <div class="w-full bg-white/20 rounded-full h-4">
+            <div class="bg-gradient-to-r from-green-400 to-green-600 h-4 rounded-full transition-all duration-1500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <div id="card-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-10 mb-16"></div>
+      <!-- Music Card -->
+        <div id="music-card" class="card glass-morphism p-8 opacity-0">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-3xl font-bold text-white flex items-center">
+            <i class="fas fa-music text-pink-400 mr-3"></i>
+            Music
+            </h2>
+            <button class="command-button rounded-full p-2 text-white/60 hover:text-white" id="music-settings">
+            <i class="fas fa-list"></i>
+            </button>
+        </div>
+        <div id="music-content" class="text-center">
+            <p class="text-white/50 italic">No music playing yet...</p>
+        </div>
+        </div>
+
+
+      <div class="text-center">
+        <button onclick="startVoiceRecognition()" class="btn-primary px-12 py-6 rounded-full text-2xl font-semibold hover:shadow-lg transition-all duration-300 relative overflow-hidden accent-font">
+          <span class="relative z-10">
+            <i class="fas fa-microphone mr-4"></i>Begin Voice Recognition
+          </span>
+        </button>
+        
+        <div class="mt-12 glass-card p-10 rounded-3xl inline-block max-w-5xl">
+          <h3 class="text-2xl font-semibold mb-8 text-center title-font tracking-wide">
+            <i class="fas fa-lightbulb mr-3 text-yellow-300"></i>Available Voice Commands
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-base accent-font">
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-cloud-sun text-yellow-300 w-6 text-xl"></i>
+              <span>"Show weather forecast"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-calculator text-green-300 w-6 text-xl"></i>
+              <span>"Show calculator"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-map-marker-alt text-red-300 w-6 text-xl"></i>
+              <span>"Show GPS location"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-clock text-blue-300 w-6 text-xl"></i>
+              <span>"Show live clock"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fab fa-youtube text-red-500 w-6 text-xl"></i>
+              <span>"Show YouTube"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-music text-pink-300 w-6 text-xl"></i>
+              <span>"Play background music"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-sticky-note text-blue-300 w-6 text-xl"></i>
+              <span>"Create a note"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-tasks text-purple-300 w-6 text-xl"></i>
+              <span>"Add a task"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-hourglass-half text-orange-300 w-6 text-xl"></i>
+              <span>"Set timer for [X] minutes"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-newspaper text-gray-300 w-6 text-xl"></i>
+              <span>"Show the news"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-quote-left text-teal-300 w-6 text-xl"></i>
+              <span>"Show a random quote"</span>
+            </div>
+            <div class="flex items-center space-x-4 p-4 hover:bg-white/10 rounded-xl transition-all duration-300">
+              <i class="fas fa-trash-alt text-red-300 w-6 text-xl"></i>
+              <span>"Clear all cards"</span>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<!--   
+    <div id="mood-modal-container" class="modal-hidden">
+    <div id="mood-modal-content">
+      <h2>How are you feeling?</h2>
+      <button data-mood="happy">Happy 😊</button>
+      <button data-mood="sad">Sad 😢</button>
+      <button data-mood="angry">Angry 😠</button>
+      <button data-mood="calm">Calm 😌</button>
+    </div>
+  </div> -->
+
+  <!-- Music recommendation card container -->
+  <div id="music-card" class="fixed bottom-6 right-6 w-96 glass-card p-6 rounded-2xl hidden z-50"></div>
+
+  <!-- Quick trigger for testing mood-based music -->
+  <!-- <button onclick="recommendMusicForMood()" id="music-recommend-btn" class="fixed bottom-6 left-6 btn-primary px-6 py-3 rounded-lg text-sm font-semibold">Get Music</button> -->
+
+
+   <!-- Your original button -->
+    <button id="music-recommend-btn" class="fixed bottom-6 left-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-sm font-semibold shadow-lg transition-transform transform hover:scale-105">Get Music</button>
+
+    <!-- Modal container for mood selection (hidden by default) -->
+    <div id="mood-modal-container" class="modal-container fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div id="mood-modal-content" class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm text-center">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">How are you feeling today?</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Each button has a data-mood attribute to store its value -->
+                <button data-mood="happy" class="mood-option p-4 bg-yellow-300 hover:bg-yellow-400 text-yellow-800 font-semibold rounded-lg transition-transform transform hover:scale-105">😊 Happy</button>
+                <button data-mood="sad" class="mood-option p-4 bg-blue-300 hover:bg-blue-400 text-blue-800 font-semibold rounded-lg transition-transform transform hover:scale-105">😢 Sad</button>
+                <button data-mood="angry" class="mood-option p-4 bg-red-400 hover:bg-red-500 text-white font-semibold rounded-lg transition-transform transform hover:scale-105">😡 Angry</button>
+                <button data-mood="calm" class="mood-option p-4 bg-green-300 hover:bg-green-400 text-green-800 font-semibold rounded-lg transition-transform transform hover:scale-105">😌 Calm</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
